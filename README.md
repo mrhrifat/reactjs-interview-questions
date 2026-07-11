@@ -101,7 +101,6 @@ Hide/Show table of contents
 | 50  | [How do you enable production mode in React?](#how-to-enable-production-mode-in-react)                                                                                                                                           |
 | 51  | [Do Hooks replace render props and higher-order components?](#do-hooks-replace-render-props-and-higher-order-components)                                                                                                         |
 | 52  | [What is a switching component?](#what-is-a-switching-component)                                                                                                                                                                 |
-| 53  | [What are React Mixins?](#what-are-react-mixins)                                                                                                                                                                                 |
 | 54  | [What are the pointer events supported in React?](#what-are-the-pointer-events-supported-in-react)                                                                                                                               |
 | 55  | [Why should component names start with a capital letter?](#why-should-component-names-start-with-capital-letter)                                                                                                                  |
 | 56  | [Are custom DOM attributes supported in React v16?](#are-custom-dom-attributes-supported-in-react-v16)                                                                                                                           |
@@ -287,7 +286,6 @@ Hide/Show table of contents
 | 229 | [Should you learn ES6 before learning ReactJS?](#should-i-learn-es6-before-learning-reactjs)                                                                                                                                     |
 | 230 | [What is concurrent rendering?](#what-is-concurrent-rendering)                                                                                                                                                                   |
 | 231 | [What is the difference between async mode and concurrent mode?](#what-is-the-difference-between-async-mode-and-concurrent-mode)                                                                                                 |
-| 232 | [Can you use JavaScript URLs in React v16.9?](#can-i-use-javascript-urls-in-react169)                                                                                                                                            |
 | 233 | [What is the purpose of the ESLint plugin for Hooks?](#what-is-the-purpose-of-eslint-plugin-for-hooks)                                                                                                                           |
 | 234 | [What is the difference between imperative and declarative programming in React?](#what-is-the-difference-between-imperative-and-declarative-in-react)                                                                             |
 | 235 | [What are the benefits of using TypeScript with ReactJS?](#what-are-the-benefits-of-using-typescript-with-reactjs)                                                                                                               |
@@ -478,6 +476,8 @@ Hide/Show table of contents
 | 87  | [What is the purpose of renderToNodeStream method?](#what-is-the-purpose-of-rendertonodestream-method)                                                                                     |
 | 88  | [How do you get redux scaffolding using create-react-app?](#how-do-you-get-redux-scaffolding-using-create-react-app)                                                                       |
 | 89  | [What is state mutation and how to prevent it?](#what-is-state-mutation-and-how-to-prevent-it)                                                                                             |
+| 90  | [What are React Mixins?](#what-are-react-mixins)                                                                                                                                           |
+| 91  | [Can I use javascript urls in react16.9?](#can-i-use-javascript-urls-in-react169)                                                                                                          |
 
 </details>
 
@@ -1754,6 +1754,8 @@ class ParentComponent extends React.Component {
     ```
 
     **Note:** In React v15.5 _PropTypes_ were moved from `React.PropTypes` to `prop-types` library.
+    
+    **Modern Recommendation:** While PropTypes are still supported, **TypeScript** is now the industry standard for type checking in React applications. Consider using TypeScript for better type safety, IDE support, and compile-time error detection.
 
     _The Equivalent Functional Component_
 
@@ -1774,6 +1776,26 @@ class ParentComponent extends React.Component {
       name: PropTypes.string.isRequired,
       age: PropTypes.number.isRequired,
     };
+    ```
+    
+    _Modern TypeScript Version_
+
+    ```tsx
+    import React from "react";
+
+    interface UserProps {
+      name: string;
+      age: number;
+    }
+
+    function User({ name, age }: UserProps) {
+      return (
+        <>
+          <h1>{`Welcome, ${name}`}</h1>
+          <h2>{`Age, ${age}`}</h2>
+        </>
+      );
+    }
     ```
 
     **[⬆ Back to Top](#table-of-contents)**
@@ -1804,7 +1826,35 @@ class ParentComponent extends React.Component {
 
 39. ### What are the recommended ways for static type checking?
 
-    Normally we use _PropTypes library_ (`React.PropTypes` moved to a `prop-types` package since React v15.5) for _type checking_ in the React applications. For large code bases, it is recommended to use _static type checkers_ such as Flow or TypeScript, that perform type checking at compile time and provide auto-completion features.
+    **Modern Recommendation (2026):** **TypeScript** is the industry standard for type checking in React applications.
+
+    While PropTypes (`React.PropTypes` moved to `prop-types` package since React v15.5) are still available for runtime type checking, they have significant limitations:
+    - Only check types at runtime
+    - No compile-time errors
+    - Limited IDE autocomplete support
+    - No inference for complex types
+
+    **TypeScript is now the recommended approach** because it provides:
+    - Compile-time type checking
+    - Excellent IDE support with IntelliSense
+    - Type inference and generic types
+    - Better refactoring capabilities
+    - Growing ecosystem and community support
+
+    **Note:** Flow (Facebook's type checker) has seen declining adoption and is rarely used in new projects.
+
+    **Example with TypeScript:**
+    ```tsx
+    interface UserProps {
+      name: string;
+      age: number;
+      isActive?: boolean;
+    }
+
+    function User({ name, age, isActive = true }: UserProps) {
+      return <div>{name} - {age}</div>;
+    }
+    ```
 
     **[⬆ Back to Top](#table-of-contents)**
 
@@ -2053,25 +2103,6 @@ class ParentComponent extends React.Component {
 
     **[⬆ Back to Top](#table-of-contents)**
 
-53. ### What are React Mixins?
-
-    _Mixins_ are a way to totally separate components to have a common functionality. Mixins **should not be used** and can be replaced with _higher-order components_ or _decorators_.
-
-    One of the most commonly used mixins is `PureRenderMixin`. You might be using it in some components to prevent unnecessary re-renders when the props and state are shallowly equal to the previous props and state:
-
-    ```javascript
-    const PureRenderMixin = require("react-addons-pure-render-mixin");
-
-    const Button = React.createClass({
-      mixins: [PureRenderMixin],
-      // ...
-    });
-    ```
-
-     <!-- TODO: mixins are deprecated -->
-
-    **[⬆ Back to Top](#table-of-contents)**
-
 54. ### What are the Pointer Events supported in React?
 
     _Pointer Events_ provide a unified way of handling all input events. In the old days we had a mouse and respective event listeners to handle them but nowadays we have many devices which don't correlate to having a mouse, like phones with touch surface or pens. We need to remember that these events will only work in browsers that support the _Pointer Events_ specification.
@@ -2123,7 +2154,9 @@ class ParentComponent extends React.Component {
 
 56. ### Are custom DOM attributes supported in React v16?
 
-    Yes. In the past, React used to ignore unknown DOM attributes. If you wrote JSX with an attribute that React doesn't recognize, React would just skip it.
+    **Note:** This question references React v16, which is outdated. The information below applies to React 16+, including current versions (React 18/19).
+
+    Yes. Starting with React 16, React no longer ignores unknown DOM attributes. If you write JSX with an attribute that React doesn't recognize, React will pass it through to the DOM.
 
     For example, let's take a look at the below attribute:
 
@@ -2131,13 +2164,13 @@ class ParentComponent extends React.Component {
     <div mycustomattribute={"something"} />
     ```
 
-    Would render an empty div to the DOM with React v15:
+    In React 15 and earlier, this would render an empty div:
 
     ```html
     <div />
     ```
 
-    In React v16 any unknown attributes will end up in the DOM:
+    In React 16 and later (including React 18/19), any unknown attributes will end up in the DOM:
 
     ```html
     <div mycustomattribute="something" />
@@ -4202,10 +4235,11 @@ class ParentComponent extends React.Component {
 
 167. ### How do you render Array, Strings and Numbers in React 16 Version?
 
-     **Arrays**: Unlike older releases, you don't need to make sure **render** method return a single element in React16. You are able to return multiple sibling elements without a wrapping element by returning an array.
+     **Note:** This question references React 16. These features remain valid in current React versions (18/19).
 
-     For example, let us take the below list of developers,
+     **Arrays**: Starting with React 16, you can return multiple sibling elements without a wrapping element by returning an array or using Fragments.
 
+     **Array approach:**
      ```jsx
      const ReactJSDevs = () => {
        return [
@@ -4213,6 +4247,19 @@ class ParentComponent extends React.Component {
          <li key="2">Jackie</li>,
          <li key="3">Jordan</li>,
        ];
+     };
+     ```
+
+     **Fragment approach (preferred):**
+     ```jsx
+     const ReactJSDevs = () => {
+       return (
+         <>
+           <li>John</li>
+           <li>Jackie</li>
+           <li>Jordan</li>
+         </>
+       );
      };
      ```
 
@@ -4467,7 +4514,17 @@ class ParentComponent extends React.Component {
 **[⬆ Back to Top](#table-of-contents)**
 
 175. ### What is the behavior of uncaught errors in react 16?
-     In React 16, errors that were not caught by any error boundary will result in unmounting of the whole React component tree. The reason behind this decision is that it is worse to leave corrupted UI in place than to completely remove it. For example, it is worse for a payments app to display a wrong amount than to render nothing.
+     **Note:** This behavior was introduced in React 16 and continues in React 18/19.
+     
+     In React 16+, errors that are not caught by any error boundary will result in unmounting of the whole React component tree. The reason behind this decision is that it is worse to leave corrupted UI in place than to completely remove it. For example, it is worse for a payments app to display a wrong amount than to render nothing.
+
+     **Best Practice:** Always wrap your application or critical sections in error boundaries to prevent complete unmounting and provide a better user experience.
+
+     ```jsx
+     <ErrorBoundary fallback={<ErrorPage />}>
+       <App />
+     </ErrorBoundary>
+     ```
 
 **[⬆ Back to Top](#table-of-contents)**
 
@@ -5430,22 +5487,6 @@ class ParentComponent extends React.Component {
 
 231. ### What is the difference between async mode and concurrent mode?
      Both refers the same thing. Previously concurrent Mode being referred to as "Async Mode" by React team. The name has been changed to highlight React’s ability to perform work on different priority levels. So it avoids the confusion from other approaches to Async Rendering.
-
-**[⬆ Back to Top](#table-of-contents)**
-
-232. ### Can I use javascript urls in react16.9?
-
-     Yes, you can use javascript: URLs but it will log a warning in the console. Because URLs starting with javascript: are dangerous by including unsanitized output in a tag like `<a href>` and create a security hole.
-
-     ```javascript
-     const companyProfile = {
-       website: "javascript: alert('Your website is hacked')",
-     };
-     // It will log a warning
-     <a href={companyProfile.website}>More details</a>;
-     ```
-
-     Remember that the future versions will throw an error for javascript URLs.
 
 **[⬆ Back to Top](#table-of-contents)**
 
@@ -8773,9 +8814,13 @@ Technically it is possible to write nested function components but it is not sug
 
 17. ### What are error boundaries in React v16?
 
+    **Note:** Error boundaries were introduced in React 16 and remain valid in current React versions (18/19).
+
     _Error boundaries_ are components that catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI instead of the component tree that crashed.
 
-    A class component becomes an error boundary if it defines a new lifecycle method called `componentDidCatch(error, info)` or `static getDerivedStateFromError() `:
+    A class component becomes an error boundary if it defines these lifecycle methods:
+    - `static getDerivedStateFromError(error)` - for rendering fallback UI
+    - `componentDidCatch(error, info)` - for logging error information
 
     ```jsx harmony
     class ErrorBoundary extends React.Component {
@@ -8784,27 +8829,28 @@ Technically it is possible to write nested function components but it is not sug
         this.state = { hasError: false };
       }
 
-      componentDidCatch(error, info) {
-        // You can also log the error to an error reporting service
-        logErrorToMyService(error, info);
+      static getDerivedStateFromError(error) {
+        // Update state so the next render will show the fallback UI
+        return { hasError: true };
       }
 
-      static getDerivedStateFromError(error) {
-        // Update state so the next render will show the fallback UI.
-        return { hasError: true };
+      componentDidCatch(error, info) {
+        // Log error to an error reporting service
+        console.error('Error caught by boundary:', error, info);
+        logErrorToMyService(error, info);
       }
 
       render() {
         if (this.state.hasError) {
-          // You can render any custom fallback UI
-          return <h1>{"Something went wrong."}</h1>;
+          // Render custom fallback UI
+          return <h1>Something went wrong.</h1>;
         }
         return this.props.children;
       }
     }
     ```
 
-    After that use it as a regular component:
+    Usage:
 
     ```jsx harmony
     <ErrorBoundary>
@@ -8812,11 +8858,20 @@ Technically it is possible to write nested function components but it is not sug
     </ErrorBoundary>
     ```
 
+    **Note:** Error boundaries currently only work with class components. There is no hook equivalent yet, though `use()` hook in React 19 provides some error handling capabilities.
+
     **[⬆ Back to Top](#table-of-contents)**
 
 18. ### How are error boundaries handled in React v15?
 
-    React v15 provided very basic support for _error boundaries_ using `unstable_handleError` method. It has been renamed to `componentDidCatch` in React v16.
+    **⚠️ LEGACY:** This question is only relevant for historical context. React v15 is extremely outdated (released in 2016).
+
+    React v15 provided very basic support for _error boundaries_ using the `unstable_handleError` method. This was an experimental feature that was later redesigned and renamed to `componentDidCatch` in React v16.
+
+    **Modern Error Boundaries (React 16+):**
+    - Use `static getDerivedStateFromError(error)` for UI fallback
+    - Use `componentDidCatch(error, info)` for logging
+    - Work consistently across server and client rendering
 
     **[⬆ Back to Top](#table-of-contents)**
 
@@ -8840,7 +8895,16 @@ Technically it is possible to write nested function components but it is not sug
 
 21. ### Is it good to use `setState()` in `componentWillMount()` method?
 
-    Yes, it is safe to use `setState()` inside `componentWillMount()` method. But at the same it is recommended to avoid async initialization in `componentWillMount()` lifecycle method. `componentWillMount()` is invoked immediately before mounting occurs. It is called before `render()`, therefore setting state in this method will not trigger a re-render. Avoid introducing any side-effects or subscriptions in this method. We need to make sure async calls for component initialization happened in `componentDidMount()` instead of `componentWillMount()`.
+    **⚠️ DEPRECATED:** `componentWillMount()` has been removed in React 17+. This question is only relevant for legacy React applications.
+
+    **Historical Context:**
+    While it was technically safe to use `setState()` inside `componentWillMount()`, this lifecycle method is now deprecated and removed because:
+    - It caused issues with server-side rendering
+    - Created confusion about the right place for async operations
+    - Was problematic with React's concurrent rendering features
+
+    **Modern Alternative:**
+    Use `componentDidMount()` for side effects and async initialization in class components:
 
     ```jsx harmony
     componentDidMount() {
@@ -8932,6 +8996,14 @@ Technically it is possible to write nested function components but it is not sug
 
 24. ### What is CRA and its benefits?
 
+    **⚠️ OUTDATED:** Create React App (CRA) is no longer actively maintained and is not recommended for new projects as of 2024+.
+
+    **Modern Alternatives:** Use **Vite** (for SPAs) or **Next.js** (for full-stack/SSR) instead. See recommended setup commands at the end of this answer.
+
+    ---
+
+    **Historical Context:**
+    
     The `create-react-app` CLI tool allows you to quickly create & run React applications with no configuration step.
 
     Let's create Todo App using _CRA_:
@@ -8959,6 +9031,36 @@ Technically it is possible to write nested function components but it is not sug
     5. A live development server that warns about common mistakes.
     6. A build script to bundle JS, CSS, and images for production, with hashes and sourcemaps.
 
+    ---
+
+    **Modern Alternatives (Recommended 2026):**
+
+    **1. Vite (Best for SPAs):**
+    ```console
+    npm create vite@latest my-app -- --template react
+    cd my-app
+    npm install
+    npm run dev
+    ```
+    - Lightning-fast HMR (Hot Module Replacement)
+    - Modern ESM-based development
+    - Optimized production builds with Rollup
+
+    **2. Next.js (Best for full-stack/SSR):**
+    ```console
+    npx create-next-app@latest my-app
+    cd my-app
+    npm run dev
+    ```
+    - Server-side rendering and App Router
+    - Server Components and Server Actions
+    - Built-in routing, API routes, and optimizations
+
+    **3. Remix (Alternative for full-stack):**
+    - Web fundamentals-first approach
+    - Excellent performance and DX
+    - Progressive enhancement
+
     **[⬆ Back to Top](#table-of-contents)**
 
 25. ### What is the lifecycle methods order in mounting?
@@ -8974,13 +9076,31 @@ Technically it is possible to write nested function components but it is not sug
 
 26. ### What are the lifecycle methods going to be deprecated in React v16?
 
-    The following lifecycle methods going to be unsafe coding practices and will be more problematic with async rendering.
+    **⚠️ FULLY DEPRECATED:** These lifecycle methods have been deprecated and removed from React 17+.
 
-    1. `componentWillMount()`
-    2. `componentWillReceiveProps()`
-    3. `componentWillUpdate()`
+    The following lifecycle methods were deprecated due to unsafe coding practices and problems with async rendering:
 
-    Starting with React v16.3 these methods are aliased with `UNSAFE_` prefix, and the unprefixed version will be removed in React v17.
+    1. `componentWillMount()` - **REMOVED in React 17**
+    2. `componentWillReceiveProps()` - **REMOVED in React 17**
+    3. `componentWillUpdate()` - **REMOVED in React 17**
+
+    **Timeline:**
+    - React 16.3: Methods aliased with `UNSAFE_` prefix
+    - React 17+: Unprefixed versions completely removed
+    - Current (React 18/19): Only `UNSAFE_` versions exist (not recommended)
+
+    **Modern Alternatives:**
+
+    | Deprecated Method | Modern Replacement |
+    |---|---|
+    | `componentWillMount()` | `constructor()` or `componentDidMount()` |
+    | `componentWillReceiveProps()` | `static getDerivedStateFromProps()` or `componentDidUpdate()` |
+    | `componentWillUpdate()` | `getSnapshotBeforeUpdate()` + `componentDidUpdate()` |
+
+    **Best Practice:** Use functional components with hooks instead:
+    - `useEffect()` for side effects
+    - `useState()` for state management
+    - `useMemo()`/`useCallback()` for optimization
 
     **[⬆ Back to Top](#table-of-contents)**
 
@@ -10558,6 +10678,73 @@ Technically it is possible to write nested function components but it is not sug
     ```
 
     **How to prevent it:** Make sure your state variables are immutable by either enforcing immutability by using plugins like Immutable.js, always using `setState` to make updates, and returning new instances in reducers when sending updated state values.
+
+**[⬆ Back to Top](#table-of-contents)**
+
+90. ### What are React Mixins?
+
+    **⚠️ DEPRECATED:** Mixins are considered legacy and should not be used in modern React applications.
+
+    _Mixins_ were a way to share common functionality between components using `React.createClass()`. However, they caused several problems:
+    - Implicit dependencies
+    - Name clashes
+    - Snowballing complexity
+
+    One of the most commonly used mixins was `PureRenderMixin`:
+
+    ```javascript
+    const PureRenderMixin = require("react-addons-pure-render-mixin");
+
+    const Button = React.createClass({
+      mixins: [PureRenderMixin],
+      // ...
+    });
+    ```
+
+    **Modern Alternatives:**
+    - **React.memo()** for functional components (replaces PureRenderMixin)
+    - **Custom Hooks** for sharing stateful logic
+    - **Higher-Order Components (HOCs)** for cross-cutting concerns
+    - **Render Props** pattern
+
+    ```javascript
+    // Modern equivalent using React.memo
+    const Button = React.memo(({ onClick, label }) => (
+      <button onClick={onClick}>{label}</button>
+    ));
+    ```
+
+    **[⬆ Back to Top](#table-of-contents)**
+
+91. ### Can I use javascript urls in react16.9?
+
+     **⚠️ DEPRECATED:** As of React 19, `javascript:` URLs are no longer supported and may throw errors.
+
+     In React 16.9, `javascript:` URLs would log a warning in the console because URLs starting with `javascript:` are dangerous security vulnerabilities (XSS attacks).
+
+     ```javascript
+     const companyProfile = {
+       website: "javascript: alert('Your website is hacked')",
+     };
+     // This logged a warning in React 16.9
+     // Now blocked or throws error in modern React
+     <a href={companyProfile.website}>More details</a>;
+     ```
+
+     **Modern Best Practice:**
+     - Never use `javascript:` URLs
+     - Use proper event handlers instead:
+     
+     ```javascript
+     const handleClick = (e) => {
+       e.preventDefault();
+       // Your logic here
+     };
+     
+     <a href="#" onClick={handleClick}>More details</a>
+     // Or better:
+     <button onClick={handleClick}>More details</button>
+     ```
 
 **[⬆ Back to Top](#table-of-contents)**
 
